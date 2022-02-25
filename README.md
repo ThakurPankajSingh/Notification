@@ -1,3 +1,3 @@
-# CleverTap React Native SDK Integration
+# CleverTap Android SDK Integration
 
-This is example application of CleverTap React Native SDK Application.
+This is a example of CleverTap React Native SDK Application.
