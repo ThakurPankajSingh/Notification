@@ -7,6 +7,14 @@ const CleverTap = require('clevertap-react-native');
 
 const Separator = () => <View style={styles.separator} />;
 
+CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, event => {
+  console.log(
+    'handleCleverTapEvent',
+    CleverTap.CleverTapPushNotificationClicked,
+    event,
+  );
+});
+
 class App extends Component {
   constructor() {
     super();
@@ -35,6 +43,11 @@ class App extends Component {
   pushNotificationn = () => {
     Alert.alert('Push Notification Clicked');
     CleverTap.recordEvent('Karthiks Noti Event');
+  };
+
+  reactPush = () => {
+    Alert.alert('React Push Notification Clicked');
+    CleverTap.recordEvent('Karthiks React Noti Event');
   };
 
   inApp = () => {
@@ -89,6 +102,8 @@ class App extends Component {
           <Separator />
           <Button title="Native Display" onPress={this.nativeDisplay} />
           <Separator />
+          <Button title="React PN" onPress={this.reactPush} />
+          <Separator />
           <Text style={styles.titleText}>Native Display Message </Text>
           <Separator />
           <Text style={styles.textND}>{this.state.title}</Text>
@@ -101,10 +116,10 @@ class App extends Component {
 }
 
 CleverTap.onUserLogin({
-  Name: 'Karthik ReactNative',
-  Identity: 'KKR546987',
-  Email: 'kkreact@gmail.com',
-  Phone: '+91768754321',
+  Name: 'Karthik',
+  Identity: 'karreact1',
+  Email: 'karthikreactn@gmail.com',
+  Phone: '+91123456789',
   Gender: 'M',
   DOB: new Date(),
   'MSG-email': true,
