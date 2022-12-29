@@ -1,5 +1,11 @@
 import React from 'react';
-import {Linking, SafeAreaView, StyleSheet, View} from 'react-native';
+import {
+  Linking,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  ToastAndroid,
+} from 'react-native';
 import {Component} from 'react';
 import {Button, Alert, Text} from 'react-native';
 
@@ -14,6 +20,15 @@ CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, event => {
     event,
   );
 });
+
+CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, event => {
+  _handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize, event);
+});
+
+function _handleCleverTapInbox(eventName, event) {
+  console.log('handleCleverTapInbox', eventName, event);
+  ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
+}
 
 class App extends Component {
   constructor() {
@@ -50,22 +65,40 @@ class App extends Component {
     CleverTap.recordEvent('Karthiks React Noti Event');
   };
 
+  reactKKPush = () => {
+    Alert.alert('React Push Notification Clicked');
+    CleverTap.recordEvent('KarthikNotiEventNew');
+  };
+
   inApp = () => {
     Alert.alert('In App Clicked');
     CleverTap.recordEvent('Karthiks InApp Event');
   };
 
-  appInbox = () => {
+  //App Inbox
+  appInbox = (eventName, event) => {
+    console.log('CleverTap Inbox Event - ', eventName, event);
     CleverTap.recordEvent('Karthiks App Inbox Event');
-    CleverTap.showInbox({
-      navBarTitle: 'App Inbox',
-      navBarTitleColor: '#000000',
-      navBarColor: '#FFFFFF',
-      inboxBackgroundColor: '#AED6F1',
-      backButtonColor: '#000000',
-      noMessageText: 'No message(s)',
-      noMessageTextColor: '#FF0000',
+    // CleverTap.showInbox({
+    //   tabs: ['Activites', 'Announcements'],
+    //   navBarTitle: 'My App Inbox',
+    //   navBarTitleColor: '#000000',
+    //   navBarColor: '#FFFFFF',
+    //   inboxBackgroundColor: '#AED6F1',
+    //   backButtonColor: '#000000',
+    //   noMessageText: 'No message(s)',
+    //   noMessageTextColor: '#FF0000',
+    //   unselectedTabColor: '#0000FF',
+    //   selectedTabColor: '#FF0000',
+    //   selectedTabIndicatorColor: '#000000',
+    //   firstTabTitle: 'Activities',
+    // });
+
+    CleverTap.getAllInboxMessages((err, res) => {
+      console.log('All Inbox Messages: ', res, err);
+      console.log('LOGGGG: ', res.length);
     });
+
     Alert.alert('App Inbox Clicked');
   };
 
@@ -104,6 +137,8 @@ class App extends Component {
           <Separator />
           <Button title="React PN" onPress={this.reactPush} />
           <Separator />
+          <Button title="React KK PN" onPress={this.reactKKPush} />
+          <Separator />
           <Text style={styles.titleText}>Native Display Message </Text>
           <Separator />
           <Text style={styles.textND}>{this.state.title}</Text>
@@ -117,8 +152,8 @@ class App extends Component {
 
 CleverTap.onUserLogin({
   Name: 'Karthik',
-  Identity: 'karreact1',
-  Email: 'karthikreactn@gmail.com',
+  Identity: 'test77',
+  Email: 'test77@test.com',
   Phone: '+91123456789',
   Gender: 'M',
   DOB: new Date(),
