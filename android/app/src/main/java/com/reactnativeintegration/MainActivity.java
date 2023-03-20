@@ -2,10 +2,10 @@ package com.reactnativeintegration;
 
 import com.facebook.react.ReactActivity;
 import com.clevertap.react.CleverTapModule;
+import com.clevertap.android.sdk.CleverTapAPI;
 import android.os.Bundle;
 import android.content.Intent;
 import android.os.Build;
-import com.clevertap.android.sdk.CleverTapAPI;
 import java.util.*;
 
 public class MainActivity extends ReactActivity {
@@ -31,12 +31,12 @@ public class MainActivity extends ReactActivity {
 	}
 
 
-  // @Override
-	// protected void onNewIntent(Intent intent) {
-  //   super.onNewIntent(intent);
-  //   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-  //     clevertapDefaultInstance.pushNotificationClickedEvent(intent.getExtras());
-  //   }
-  // }
+  @Override
+   public void onNewIntent(Intent intent) {
+       super.onNewIntent(intent);
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+           CleverTapAPI.getDefaultInstance(getApplicationContext()).pushNotificationClickedEvent(intent.getExtras());
+       }
+    }
 
 }

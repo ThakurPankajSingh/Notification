@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   ToastAndroid,
+  AppState,
 } from 'react-native';
 import {Component} from 'react';
 import {Button, Alert, Text} from 'react-native';
@@ -25,6 +26,11 @@ CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, event => {
   _handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize, event);
 });
 
+CleverTap.addListener(CleverTap.CleverTapInboxMessageTapped, event => {
+  var abc = JSON.stringify(event);
+  console.log('CleverTapInboxMessageTapped: ', abc);
+});
+
 function _handleCleverTapInbox(eventName, event) {
   console.log('handleCleverTapInbox', eventName, event);
   ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
@@ -40,6 +46,35 @@ class App extends Component {
   state = {
     title: 'Title',
     message: 'Message',
+    appState: AppState.currentState,
+  };
+
+  //to add the listener
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  //to remove the listener
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  //To fetch the app state
+  _handleAppStateChange = nextAppState => {
+    this.setState({appState: nextAppState});
+
+    console.log('AppState' + this.state.appState);
+    if (this.state.appState === 'background') {
+      //for background
+      console.log('Background Mode.');
+      CleverTap.discardInAppNotifications();
+    } else if (this.state.appState === 'active') {
+      //for foreground
+      console.log('Foreground Mode.');
+    } else if (this.state.appState === 'inactive') {
+      //for inactive
+      console.log('inactive Mode.');
+    }
   };
 
   updateProfile = () => {
@@ -67,7 +102,8 @@ class App extends Component {
 
   reactKKPush = () => {
     Alert.alert('React Push Notification Clicked');
-    CleverTap.recordEvent('KarthikNotiEventNew');
+    // CleverTap.recordEvent('KarthikNotiEventNew');
+    CleverTap.recordEvent('Test Sharif');
   };
 
   inApp = () => {
@@ -79,20 +115,20 @@ class App extends Component {
   appInbox = (eventName, event) => {
     console.log('CleverTap Inbox Event - ', eventName, event);
     CleverTap.recordEvent('Karthiks App Inbox Event');
-    // CleverTap.showInbox({
-    //   tabs: ['Activites', 'Announcements'],
-    //   navBarTitle: 'My App Inbox',
-    //   navBarTitleColor: '#000000',
-    //   navBarColor: '#FFFFFF',
-    //   inboxBackgroundColor: '#AED6F1',
-    //   backButtonColor: '#000000',
-    //   noMessageText: 'No message(s)',
-    //   noMessageTextColor: '#FF0000',
-    //   unselectedTabColor: '#0000FF',
-    //   selectedTabColor: '#FF0000',
-    //   selectedTabIndicatorColor: '#000000',
-    //   firstTabTitle: 'Activities',
-    // });
+    CleverTap.showInbox({
+      tabs: ['Activites', 'Announcements'],
+      navBarTitle: 'My App Inbox',
+      navBarTitleColor: '#000000',
+      navBarColor: '#FFFFFF',
+      inboxBackgroundColor: '#AED6F1',
+      backButtonColor: '#000000',
+      noMessageText: 'No message(s)',
+      noMessageTextColor: '#FF0000',
+      unselectedTabColor: '#0000FF',
+      selectedTabColor: '#FF0000',
+      selectedTabIndicatorColor: '#000000',
+      firstTabTitle: 'Activities',
+    });
 
     CleverTap.getAllInboxMessages((err, res) => {
       console.log('All Inbox Messages: ', res, err);
@@ -152,8 +188,8 @@ class App extends Component {
 
 CleverTap.onUserLogin({
   Name: 'Karthik',
-  Identity: 'test77',
-  Email: 'test77@test.com',
+  Identity: 'test84',
+  Email: 'test84@test.com',
   Phone: '+91123456789',
   Gender: 'M',
   DOB: new Date(),
