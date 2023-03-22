@@ -3,8 +3,11 @@ package com.reactnativeintegration;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import java.util.Iterator;
 import java.util.*;
-import android.app.Application;
+
+import android.app.Activity;
+import android.app.Application.*;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import com.facebook.react.ReactApplication;
 import com.clevertap.android.sdk.pushnotification.CTPushNotificationListener;
@@ -17,6 +20,10 @@ import com.facebook.soloader.SoLoader;
 import com.reactnativeintegration.MainApplication;
 import android.os.Looper;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.ReactInstanceManager.ReactInstanceEventListener;
@@ -27,7 +34,10 @@ import org.json.JSONObject;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
-public class MainApplication extends Application implements ReactApplication, CTPushNotificationListener {
+import com.clevertap.react.CleverTapApplication;
+
+// public class MainApplication extends Application implements ReactApplication, CTPushNotificationListener {
+public class MainApplication extends CleverTapApplication implements ActivityLifecycleCallbacks, ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
@@ -67,77 +77,77 @@ public class MainApplication extends Application implements ReactApplication, CT
     CleverTapAPI.setDebugLevel(3);
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    CleverTapAPI.getDefaultInstance(this).setCTPushNotificationListener(this);
+//    CleverTapAPI.getDefaultInstance(this).setCTPushNotificationListener(this);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 
-  @Override
-    public void onNotificationClickedPayloadReceived(final HashMap<String, Object> payload) {
-        Log.e(TAG, "onNotificationClickedPayloadReceived called");
-        final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
+//  @Override
+//    public void onNotificationClickedPayloadReceived(final HashMap<String, Object> payload) {
+//        Log.e(TAG, "onNotificationClickedPayloadReceived called");
+//        final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";
+//
+//        Handler handler = new Handler(Looper.getMainLooper());
+//        handler.post(new Runnable() {
+//            public void run() {
+//
+//                // Construct and load our normal React JS code bundle
+//                final ReactInstanceManager mReactInstanceManager = ((ReactApplication) getApplicationContext())
+//                        .getReactNativeHost().getReactInstanceManager();
+//                ReactContext context = mReactInstanceManager.getCurrentReactContext();
+//                // If it's constructed, send a notification
+//                if (context != null) {
+//                    sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload), context);
+//                } else {
+//                    // Otherwise wait for construction, then send the notification
+//                    mReactInstanceManager
+//                            .addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+//                                public void onReactContextInitialized(ReactContext context) {
+//                                    sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload),
+//                                            context);
+//                                    mReactInstanceManager.removeReactInstanceEventListener(this);
+//                                }
+//                            });
+//                    if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
+//                        // Construct it in the background
+//                        mReactInstanceManager.createReactContextInBackground();
+//                    }
+//                }
+//
+//            }
+//        });
+//
+//    }
 
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            public void run() {
+//    private void sendEvent(String eventName, Object params, ReactContext context) {
+//        try {
+//            context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+//                    .emit(eventName, params);
+//            Log.e(TAG, "Sending event "+eventName);
+//        } catch (Throwable t) {
+//            Log.e(TAG, t.getLocalizedMessage());
+//        }
+//    }
 
-                // Construct and load our normal React JS code bundle
-                final ReactInstanceManager mReactInstanceManager = ((ReactApplication) getApplicationContext())
-                        .getReactNativeHost().getReactInstanceManager();
-                ReactContext context = mReactInstanceManager.getCurrentReactContext();
-                // If it's constructed, send a notification
-                if (context != null) {
-                    sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload), context);
-                } else {
-                    // Otherwise wait for construction, then send the notification
-                    mReactInstanceManager
-                            .addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-                                public void onReactContextInitialized(ReactContext context) {
-                                    sendEvent(CLEVERTAP_PUSH_NOTIFICATION_CLICKED, getWritableMapFromMap(payload),
-                                            context);
-                                    mReactInstanceManager.removeReactInstanceEventListener(this);
-                                }
-                            });
-                    if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
-                        // Construct it in the background
-                        mReactInstanceManager.createReactContextInBackground();
-                    }
-                }
-
-            }
-        });
-
-    }
-
-    private void sendEvent(String eventName, Object params, ReactContext context) {
-        try {
-            context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, params);
-            Log.e(TAG, "Sending event "+eventName);
-        } catch (Throwable t) {
-            Log.e(TAG, t.getLocalizedMessage());
-        }
-    }
-
-    public static WritableMap getWritableMapFromMap(Map<String, ? extends Object> var1) {
-        JSONObject extras = var1 != null ? new JSONObject(var1) : new JSONObject();
-        WritableMap extrasParams = Arguments.createMap();
-        Iterator extrasKeys = extras.keys();
-        while (extrasKeys.hasNext()) {
-            String key = null;
-            String value = null;
-            try {
-                key = extrasKeys.next().toString();
-                value = extras.get(key).toString();
-            } catch (Throwable t) {
-                Log.e(TAG, t.getLocalizedMessage());
-            }
-
-            if (key != null && value != null) {
-                extrasParams.putString(key, value);
-            }
-        }
-        return extrasParams;
-    }
+//    public static WritableMap getWritableMapFromMap(Map<String, ? extends Object> var1) {
+//        JSONObject extras = var1 != null ? new JSONObject(var1) : new JSONObject();
+//        WritableMap extrasParams = Arguments.createMap();
+//        Iterator extrasKeys = extras.keys();
+//        while (extrasKeys.hasNext()) {
+//            String key = null;
+//            String value = null;
+//            try {
+//                key = extrasKeys.next().toString();
+//                value = extras.get(key).toString();
+//            } catch (Throwable t) {
+//                Log.e(TAG, t.getLocalizedMessage());
+//            }
+//
+//            if (key != null && value != null) {
+//                extrasParams.putString(key, value);
+//            }
+//        }
+//        return extrasParams;
+//    }
 
 
   
@@ -172,4 +182,39 @@ public class MainApplication extends Application implements ReactApplication, CT
       }
     }
   }
+
+    @Override
+    public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onActivityStarted(@NonNull Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityResumed(@NonNull Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityPaused(@NonNull Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityStopped(@NonNull Activity activity) {
+
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle bundle) {
+
+    }
+
+    @Override
+    public void onActivityDestroyed(@NonNull Activity activity) {
+
+    }
 }
