@@ -152,6 +152,10 @@ class App extends Component {
         ).replace(/['"]+/g, ''),
       });
       Alert.alert('Native Display Clicked');
+
+      // for Display Unit Id use the below one
+      CleverTap.pushDisplayUnitViewedEventForID(this.state.datasource.wzrk_id);
+      CleverTap.pushDisplayUnitClickedEventForID(this.state.datasource.wzrk_id);
     });
   };
 
