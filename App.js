@@ -80,6 +80,7 @@ class App extends Component {
   updateProfile = () => {
     CleverTap.profileSet({
       DOB: new Date('1996-10-11T06:35:31'),
+      UserPropKey: 'UserPropValue',
       Photo: 'https://www.entforall.com/images/founder.jpg',
     });
     Alert.alert('Profile Update Clicked');
