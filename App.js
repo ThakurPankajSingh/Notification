@@ -224,6 +224,11 @@ class App extends Component {
         message: this.state.datasource[0].content[0].message.text,
         title: this.state.datasource[0].content[0].title.text,
       });
+      Alert.alert('Native Display Clicked');
+
+      // for Display Unit Id use the below one
+      CleverTap.pushDisplayUnitViewedEventForID(this.state.datasource.wzrk_id);
+      CleverTap.pushDisplayUnitClickedEventForID(this.state.datasource.wzrk_id);
     });
   };
 
