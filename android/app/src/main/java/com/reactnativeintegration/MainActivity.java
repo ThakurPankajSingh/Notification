@@ -28,6 +28,8 @@ public class MainActivity extends ReactActivity {
 	protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	CleverTapModule.setInitialUri(getIntent().getData());
+
+      // CleverTapAPI.setNotificationHandler((NotificationHandler)new PushTemplateNotificationHandler());
 	}
 
 

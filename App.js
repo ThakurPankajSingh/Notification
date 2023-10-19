@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-  Linking,
   SafeAreaView,
   StyleSheet,
   View,
   ToastAndroid,
   AppState,
+  Linking,
 } from 'react-native';
 import {Component} from 'react';
 import {Button, Alert, Text} from 'react-native';
@@ -13,6 +13,33 @@ import {Button, Alert, Text} from 'react-native';
 const CleverTap = require('clevertap-react-native');
 
 const Separator = () => <View style={styles.separator} />;
+
+Linking.addEventListener('url', e => {
+  console.log('Deeplink inside app' + e.url);
+});
+/// this handles the case where a deep link launches the application
+Linking.getInitialURL()
+  .then(url => {
+    if (url) {
+      console.log('launch url', url);
+    }
+  })
+  .catch(err => console.error('launch url error', err));
+// check to see if CleverTap has a launch deep link
+
+// handles the case where the app is launched from a push notification containing a deep link
+CleverTap.getInitialUrl((err, url) => {
+  if (url) {
+    console.log('CleverTap launch url', url);
+  } else if (err) {
+    console.log('CleverTap launch url', err);
+  }
+});
+
+CleverTap.getAllInboxMessages((err, res) => {
+  console.log('All Inbox Messages: ', res, err);
+  console.log('LOGGGG: ', res.length);
+});
 
 CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, event => {
   console.log(
@@ -29,6 +56,10 @@ CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, event => {
 CleverTap.addListener(CleverTap.CleverTapInboxMessageTapped, event => {
   var abc = JSON.stringify(event);
   console.log('CleverTapInboxMessageTapped: ', abc);
+});
+
+CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, data => {
+  console.log('From ND Add Listener: ', JSON.stringify(data));
 });
 
 function _handleCleverTapInbox(eventName, event) {
@@ -80,6 +111,7 @@ class App extends Component {
   updateProfile = () => {
     CleverTap.profileSet({
       DOB: new Date('1996-10-11T06:35:31'),
+      UserPropKey: 'UserPropValue',
       Photo: 'https://www.entforall.com/images/founder.jpg',
     });
     Alert.alert('Profile Update Clicked');
@@ -140,18 +172,58 @@ class App extends Component {
 
   nativeDisplay = () => {
     CleverTap.recordEvent('Karthiks Native Display Event');
+    // CleverTap.recordEvent('KarthikNotiEventNew');
+    // var props = {
+    //   'Product Name': 'Home Beauty Callus Remover Device | 1.5 V',
+    //   'Product SKU': '16190009',
+    //   'Product Price': '177.5',
+    //   'Brand Name': 'HOME BEAUTY',
+    //   'Is In Stock': '1',
+    // };
+    // CleverTap.recordEvent('Product Viewed', props);
+    // setTimeout(() => {
+    //   CleverTap.getAllDisplayUnits((err, res) => {
+    //     console.log('All Display Units: ', JSON.stringify(res), err);
+    //   });
+    // }, 10000);
+
+    CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, data => {
+      console.log('This is unit iD: ', data);
+    });
     CleverTap.getAllDisplayUnits((err, res) => {
       console.log('All Display Units: ', res, err);
-      this.setState({datasource: JSON.parse(res)});
-      this.setState({
-        title: JSON.stringify(
-          this.state.datasource.content[0].title.text,
-        ).replace(/['"]+/g, ''),
-        message: JSON.stringify(
-          this.state.datasource.content[0].message.text,
-        ).replace(/['"]+/g, ''),
-      });
+      // this.setState({datasource: JSON.parse(res)});
+      this.setState({datasource: res});
+      console.log('this is Datasource: ', this.state.datasource[0]);
+      //   // this.setState({
+      //   //   title: JSON.stringify(
+      //   //     this.state.datasource.content[0].title.text,
+      //   //   ).replace(/['"]+/g, ''),
+      //   //   message: JSON.stringify(
+      //   //     this.state.datasource.content[0].message.text,
+      //   //   ).replace(/['"]+/g, ''),
+      //   // });
+      //   // this.setState({
+      //   //   title: JSON.stringify(
+      //   //     this.state.datasource.content[0].title.text,
+      //   //   ).replace(/['"]+/g, ''),
+      //   //   message: JSON.stringify(
+      //   //     this.state.datasource.content[0].message.text,
+      //   //   ).replace(/['"]+/g, ''),
+      //   // });
       Alert.alert('Native Display Clicked');
+
+      //   //   // for Display Unit Id use the below one
+      console.log('This is wzrk_id:', this.state.datasource[0].wzrk_id);
+      CleverTap.pushDisplayUnitViewedEventForID(this.state.datasource.ti);
+      CleverTap.pushDisplayUnitClickedEventForID(this.state.datasource.ti);
+
+      // this.setState({datasource: JSON.parse(res)});
+      // this.setState({nativekey: this.state.datasource.wzrk_id}); //Store wzrk_id to use it as Unit_id
+      this.setState({
+        message: this.state.datasource[0].content[0].message.text,
+        title: this.state.datasource[0].content[0].title.text,
+      });
     });
   };
 
@@ -186,18 +258,13 @@ class App extends Component {
   }
 }
 
-CleverTap.onUserLogin({
-  Name: 'Karthik',
-  Identity: 'test84',
-  Email: 'test84@test.com',
-  Phone: '+91123456789',
-  Gender: 'M',
-  DOB: new Date(),
-  'MSG-email': true,
-  'MSG-push': true,
-  'MSG-sms': true,
-  'MSG-whatsapp': true,
-});
+// CleverTap.onUserLogin({
+//   Email: 'karthik.iyer@clevertap.com',
+//   'MSG-email': true,
+//   'MSG-push': true,
+//   'MSG-sms': true,
+//   'MSG-whatsapp': true,
+// });
 
 CleverTap.createNotificationChannel(
   'testkk123',

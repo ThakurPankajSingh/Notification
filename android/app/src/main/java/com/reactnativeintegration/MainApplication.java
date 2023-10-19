@@ -36,6 +36,11 @@ import java.util.HashMap;
 
 import com.clevertap.react.CleverTapApplication;
 
+import com.clevertap.android.sdk.interfaces.NotificationHandler;
+import com.clevertap.android.pushtemplates.PushTemplateNotificationHandler;
+import com.clevertap.android.pushtemplates.PTConstants;
+import com.clevertap.android.pushtemplates.TemplateRenderer;
+
 // public class MainApplication extends Application implements ReactApplication, CTPushNotificationListener {
 public class MainApplication extends CleverTapApplication implements ActivityLifecycleCallbacks, ReactApplication {
 
@@ -79,6 +84,9 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
     SoLoader.init(this, /* native exopackage */ false);
 //    CleverTapAPI.getDefaultInstance(this).setCTPushNotificationListener(this);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+
+    CleverTapAPI.setNotificationHandler((NotificationHandler)new PushTemplateNotificationHandler());
+
   }
 
 //  @Override

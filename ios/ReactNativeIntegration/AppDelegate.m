@@ -6,6 +6,10 @@
 #import <CleverTap-iOS-SDK/CleverTap.h>
 #import <clevertap-react-native/CleverTapReactManager.h>
 #import <React/RCTLinkingManager.h>
+#import <CleverTap-iOS-SDK/CleverTapURLDelegate.h>
+
+
+#import <CleverTap-iOS-SDK/CleverTapInstanceConfig.h>
 
 @implementation AppDelegate
 
@@ -29,6 +33,17 @@
   [CleverTap setDebugLevel:CleverTapLogDebug];
   [[CleverTapReactManager sharedInstance] applicationDidLaunchWithOptions:launchOptions];
   
+  //
+  //  // Config an additional instance
+  //  CleverTapInstanceConfig *ctConfig = [[CleverTapInstanceConfig alloc] initWithAccountId:@"TEST-W8W-6WR-846Z" accountToken:@"TEST-W8W-6WR-846Z"];
+  //  [ctConfig setLogLevel:CleverTapLogDebug];
+  //  [ctConfig setAnalyticsOnly:NO];
+  //  [ctConfig setEnablePersonalization:NO];
+  //
+  //  CleverTap *additionalCleverTapInstance = [CleverTap instanceWithConfig:ctConfig];
+  //  [additionalCleverTapInstance enableDeviceNetworkInfoReporting:YES];
+  //  [additionalCleverTapInstance notifyApplicationLaunchedWithOptions:nil];
+  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
@@ -38,7 +53,14 @@
 }
 
 -(void) registerForPush {
+  
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  UNNotificationAction *action1 = [UNNotificationAction actionWithIdentifier:@"action_1" title:@"Back" options:UNNotificationActionOptionNone];
+  UNNotificationAction *action2 = [UNNotificationAction actionWithIdentifier:@"action_2" title:@"Next" options:UNNotificationActionOptionNone];
+  UNNotificationAction *action3 = [UNNotificationAction actionWithIdentifier:@"action_3" title:@"View In App" options:UNNotificationActionOptionNone];
+  UNNotificationCategory *cat = [UNNotificationCategory categoryWithIdentifier:@"CTNotification" actions:@[action1, action2, action3] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+  [center setNotificationCategories:[NSSet setWithObjects:cat, nil]];
+  
   center.delegate = self;
   [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error){
     if(!error){
@@ -59,9 +81,16 @@
   NSLog(@"Error %@",error.description);
 }
 
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+  // Do something with the url here
+  NSLog(@"URL Received from CT: %@", url);
+  return YES;
+}
+
 //Handle Deeplink
 -(BOOL) application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
+  NSLog(url);
   return [RCTLinkingManager application:app openURL:url options:options];
   
 }

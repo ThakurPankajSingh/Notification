@@ -128,12 +128,14 @@ def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitect
 android {
     ndkVersion rootProject.ext.ndkVersion
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    // compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.reactnativeintegration"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        // targetSdkVersion rootProject.ext.targetSdkVersion
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -201,7 +203,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
     implementation project(':clevertap-react-native')
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.6.6'
+    // implementation 'com.clevertap.android:clevertap-android-sdk:4.6.6'
+    implementation 'com.clevertap.android:clevertap-android-sdk:5.0.0'
     implementation 'com.google.android.gms:play-services-base:17.6.0'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
     // implementation 'com.google.android.exoplayer:exoplayer:2.8.4'
@@ -214,6 +217,8 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'
 
     implementation 'com.google.android.material:material:1.4.0'
+
+    implementation "com.clevertap.android:push-templates:1.1.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

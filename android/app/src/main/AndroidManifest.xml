@@ -16,7 +16,8 @@
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:exported="true">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
@@ -30,6 +31,14 @@
         android:name="CLEVERTAP_TOKEN"
         android:value="TEST-206-0b0"/>
 
+      <!-- NG ECRM   -->
+      <!-- <meta-data
+        android:name="CLEVERTAP_ACCOUNT_ID"
+        android:value="656-68W-R56Z"/>
+      <meta-data
+        android:name="CLEVERTAP_TOKEN"
+        android:value="0b6-656"/> -->
+
       <!-- <meta-data
         android:name="CLEVERTAP_ACCOUNT_ID"
         android:value="TEST-R9Z-4W9-646Z"/>
@@ -39,7 +48,18 @@
       <!-- <meta-data
         android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
         android:value="1"/> -->
-      <service android:name=".MyFirebaseMessagingService">
+
+
+      <!-- <service
+            android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service> -->
+
+      <service android:name=".MyFirebaseMessagingService"
+        android:exported="true">
         <intent-filter>
           <action android:name="com.google.firebase.MESSAGING_EVENT"/>
         </intent-filter>
