@@ -33,6 +33,12 @@ target 'ReactNativeIntegration' do
         target.build_configurations.each do |config|
           config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
          end
+        case target.name
+          when 'RCT-Folly'
+            target.build_configurations.each do |config|
+              config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
+            end
+          end
       end
   end
   

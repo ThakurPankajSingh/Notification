@@ -10,7 +10,11 @@ import {
 import {Component} from 'react';
 import {Button, Alert, Text} from 'react-native';
 
+import {NativeModules} from 'react-native';
+
 const CleverTap = require('clevertap-react-native');
+
+const {CTModule} = NativeModules;
 
 const Separator = () => <View style={styles.separator} />;
 
@@ -35,6 +39,8 @@ CleverTap.getInitialUrl((err, url) => {
     console.log('CleverTap launch url', err);
   }
 });
+
+CleverTap.enablePersonalization();
 
 CleverTap.getAllInboxMessages((err, res) => {
   console.log('All Inbox Messages: ', res, err);
@@ -72,6 +78,7 @@ class App extends Component {
     super();
     CleverTap.setDebugLevel(3);
     CleverTap.initializeInbox();
+    // CTModule.initCleverTap("Kuwait");
   }
 
   state = {
@@ -83,6 +90,8 @@ class App extends Component {
   //to add the listener
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
+    console.log('This is from didMount');
+    // CTModule.initCleverTap('Kuwait');
   }
 
   //to remove the listener
@@ -108,18 +117,47 @@ class App extends Component {
     }
   };
 
-  updateProfile = () => {
-    CleverTap.profileSet({
-      DOB: new Date('1996-10-11T06:35:31'),
-      UserPropKey: 'UserPropValue',
-      Photo: 'https://www.entforall.com/images/founder.jpg',
+  profileGetProp = () => {
+    CleverTap.profileGetProperty('MSG-email', (err, res) => {
+      console.log('CleverTap GetProperty  => CleverTap MSG-email: ', res, err);
     });
+    CleverTap.profileGetProperty('Email', (err, res) => {
+      console.log('CleverTap GetProperty  => CleverTap Email: ', res, err);
+    });
+    CleverTap.profileGetProperty('Name', (err, res) => {
+      console.log('CleverTap GetProperty  => CleverTap Name: ', res, err);
+    });
+  };
+
+  updateProfile = () => {
+    // CleverTap.profileSet({
+    //   DOB: new Date('1996-10-11T06:35:31'),
+    //   UserPropKey: 'UserPropValue',
+    //   Photo: 'https://www.entforall.com/images/founder.jpg',
+    // });
+
+    CleverTap.onUserLogin({
+      Email: 'iamreactnativeuser@test.com',
+      disablePromotionalNoti: 'no',
+      'MSG-email': true,
+      'MSG-push': true,
+      'MSG-sms': true,
+      'MSG-whatsapp': true,
+    });
+    //called from CTModule.java
+    // CTModule.callOnUserLogin();
+
     Alert.alert('Profile Update Clicked');
   };
 
   pushEvent = () => {
     Alert.alert('Push Event Clicked');
-    CleverTap.recordEvent('Product Viewed');
+    // CleverTap.recordEvent('Product Viewed');
+
+    // event with properties
+    var props = {test: 'Hello', test2: 'World'};
+
+    CleverTap.recordEvent('App Launched', props);
   };
 
   pushNotificationn = () => {
@@ -227,10 +265,30 @@ class App extends Component {
     });
   };
 
+  goToKuwait = () => {
+    CTModule.initCleverTap('KSA');
+    CTModule.resurrectApp();
+    // CleverTap.setInstanceWithAccountId('TEST-W8W-6WR-846Z');
+  };
+  goToOman = () => {
+    CTModule.initCleverTap('UAE');
+    CTModule.resurrectApp();
+  };
+
+  promotionalNotif = () => {
+    CleverTap.profileSet({
+      disablePromotionalNoti: 'yes',
+    });
+  };
+
   render() {
     return (
       <SafeAreaView style={styles.container}>
         <View>
+          <Button title="Go To KSA" onPress={this.goToKuwait} />
+          <Separator />
+          <Button title="Go To UAE" onPress={this.goToOman} />
+          <Separator />
           <Button title="Update Profile" onPress={this.updateProfile} />
           <Separator />
           <Button title="Push Event" onPress={this.pushEvent} />
@@ -243,15 +301,17 @@ class App extends Component {
           <Separator />
           <Button title="Native Display" onPress={this.nativeDisplay} />
           <Separator />
-          <Button title="React PN" onPress={this.reactPush} />
-          <Separator />
           <Button title="React KK PN" onPress={this.reactKKPush} />
+          <Separator />
+          <Button title="Promotional" onPress={this.promotionalNotif} />
           <Separator />
           <Text style={styles.titleText}>Native Display Message </Text>
           <Separator />
           <Text style={styles.textND}>{this.state.title}</Text>
           <Separator />
           <Text style={styles.textND}>{this.state.message}</Text>
+          <Separator />
+          <Button title="Get Profile Property" onPress={this.profileGetProp} />
         </View>
       </SafeAreaView>
     );
@@ -259,7 +319,8 @@ class App extends Component {
 }
 
 // CleverTap.onUserLogin({
-//   Email: 'karthik.iyer@clevertap.com',
+//   Email: 'iamreactnativeuser@test.com',
+//   disablePromotionalNoti: 'no',
 //   'MSG-email': true,
 //   'MSG-push': true,
 //   'MSG-sms': true,
@@ -270,6 +331,22 @@ CleverTap.createNotificationChannel(
   'testkk123',
   'React Native Test',
   'This is a React-Native test by Karthik',
+  5,
+  true,
+);
+
+CleverTap.createNotificationChannel(
+  'transactional',
+  'transactional_test',
+  'This is a transactional_test by Karthik',
+  5,
+  true,
+);
+
+CleverTap.createNotificationChannel(
+  'promotional',
+  'promotional_test',
+  'This is a promotional_test by Karthik',
   5,
   true,
 );

@@ -1,12 +1,12 @@
 PODS:
   - boost (1.76.0)
-  - CleverTap-iOS-SDK (5.2.0):
+  - CleverTap-iOS-SDK (6.2.1):
     - SDWebImage (~> 5.11)
-  - clevertap-react-native (1.2.0):
-    - CleverTap-iOS-SDK (= 5.2.0)
+  - clevertap-react-native (2.2.1):
+    - CleverTap-iOS-SDK (= 6.2.1)
     - React-Core
   - CocoaAsyncSocket (7.6.5)
-  - CTNotificationContent (0.2.4)
+  - CTNotificationContent (0.2.7)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.67.2)
   - FBReactNativeSpec (0.67.2):
@@ -346,9 +346,9 @@ PODS:
     - React-jsi (= 0.67.2)
     - React-logger (= 0.67.2)
     - React-perflogger (= 0.67.2)
-  - SDWebImage (5.18.1):
-    - SDWebImage/Core (= 5.18.1)
-  - SDWebImage/Core (5.18.1)
+  - SDWebImage (5.19.4):
+    - SDWebImage/Core (= 5.19.4)
+  - SDWebImage/Core (5.19.4)
   - Toast (4.0.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -503,10 +503,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  CleverTap-iOS-SDK: 6a38eea6d2f0c336fb142baadcca2cd8aafd2290
-  clevertap-react-native: 3acdd0abca15a23e9339e19fa26abf0635ac4bd2
+  CleverTap-iOS-SDK: 78ea6d752d84918f0426f7b3959777d862bcb348
+  clevertap-react-native: 34c3acaf46e7f8cd4f349dd5a1f851580d410be3
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  CTNotificationContent: 1dba279204184b66fcc4d6282a9741715c0ec342
+  CTNotificationContent: 149ec0d68884bf26ef0c045199f6a4e1b5a22dfd
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   FBLazyVector: 244195e30d63d7f564c55da4410b9a24e8fbceaa
   FBReactNativeSpec: c94002c1d93da3658f4d5119c6994d19961e3d52
@@ -548,11 +548,11 @@ SPEC CHECKSUMS:
   React-RCTVibration: 99c7f67fba7a5ade46e98e870c6ff2444484f995
   React-runtimeexecutor: 2450b43df7ffe8e805a0b3dcb2abd4282f1f1836
   ReactCommon: d98c6c96b567f9b3a15f9fd4cc302c1eda8e3cf2
-  SDWebImage: ebdbcebc7933a45226d9313bd0118bc052ad458b
+  SDWebImage: 066c47b573f408f18caa467d71deace7c0f8280d
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   Yoga: 9b6696970c3289e8dea34b3eda93f23e61fb8121
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 5111bbd486487e260413d4d3b09b455ed6a8f663
+PODFILE CHECKSUM: 7bceb2ea1af506bf6d89a3ef6b805479d724122a
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.14.3
