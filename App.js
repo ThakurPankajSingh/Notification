@@ -1,379 +1,103 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  ToastAndroid,
-  AppState,
-  Linking,
-} from 'react-native';
-import {Component} from 'react';
-import {Button, Alert, Text} from 'react-native';
+import {Linking} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 
-import {NativeModules} from 'react-native';
+import Home from './Home';
+import Profile from './Profile';
+import NativeDisplay from './NativeDisplay';
+import CustomAppInbox from './CustomAppInbox';
+import WebView from './WebView';
+import ProdExp from './ProdExp';
+import GeoFence from './GeoFence';
+import Login from './Login';
 
-const CleverTap = require('clevertap-react-native');
+const Stack = createStackNavigator();
 
-const {CTModule} = NativeModules;
+// Create a navigation reference
+export const navigationRef = React.createRef();
 
-const Separator = () => <View style={styles.separator} />;
-
-Linking.addEventListener('url', e => {
-  console.log('Deeplink inside app' + e.url);
-});
-/// this handles the case where a deep link launches the application
-Linking.getInitialURL()
-  .then(url => {
-    if (url) {
-      console.log('launch url', url);
-    }
-  })
-  .catch(err => console.error('launch url error', err));
-// check to see if CleverTap has a launch deep link
-
-// handles the case where the app is launched from a push notification containing a deep link
-CleverTap.getInitialUrl((err, url) => {
-  if (url) {
-    console.log('CleverTap launch url', url);
-  } else if (err) {
-    console.log('CleverTap launch url', err);
+export function navigate(name, params) {
+  if (navigationRef.current?.isReady()) {
+    // Navigate to the desired screen
+    navigationRef.current?.navigate(name, params);
   }
-});
+}
 
-CleverTap.enablePersonalization();
+const linking = {
+  prefixes: ['karthikdl://'],
+  config: {
+    screens: {
+      NativeDisplay: 'nativedisplaypage',
+      GeoFence: 'geofencepage',
+      CustomAppInbox: 'customaipage',
+      WebView: 'webviewpage',
+      ProdExp: 'prodexppage',
+      Profile: 'mainpage',
+      Login: 'loginpage',
+    },
+  },
+};
 
-CleverTap.getAllInboxMessages((err, res) => {
-  console.log('All Inbox Messages: ', res, err);
-  console.log('LOGGGG: ', res.length);
-});
-
-CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, event => {
-  console.log(
-    'handleCleverTapEvent',
-    CleverTap.CleverTapPushNotificationClicked,
-    event,
+const App = () => {
+  return (
+    <NavigationContainer
+      linking={linking}
+      ref={navigationRef} // Set the navigation reference
+      onReady={() => {
+        console.log('Navigation is ready');
+      }}>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#000',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}>
+        <Stack.Screen name="Home" component={Home} options={{title: 'Home'}} />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{title: 'Profile'}}
+        />
+        <Stack.Screen
+          name="NativeDisplay"
+          component={NativeDisplay}
+          options={{title: 'NativeDisplay'}}
+        />
+        <Stack.Screen
+          name="CustomAppInbox"
+          component={CustomAppInbox}
+          options={{title: 'CustomAppInbox'}}
+        />
+        <Stack.Screen
+          name="WebView"
+          component={WebView}
+          options={{title: 'WebView'}}
+        />
+        <Stack.Screen
+          name="ProdExp"
+          component={ProdExp}
+          options={{title: 'ProdExp'}}
+        />
+        <Stack.Screen
+          name="GeoFence"
+          component={GeoFence}
+          options={{title: 'GeoFence'}}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{title: 'Login'}}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-});
-
-CleverTap.addListener(CleverTap.CleverTapInboxDidInitialize, event => {
-  _handleCleverTapInbox(CleverTap.CleverTapInboxDidInitialize, event);
-});
-
-CleverTap.addListener(CleverTap.CleverTapInboxMessageTapped, event => {
-  var abc = JSON.stringify(event);
-  console.log('CleverTapInboxMessageTapped: ', abc);
-});
-
-CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, data => {
-  console.log('From ND Add Listener: ', JSON.stringify(data));
-});
-
-function _handleCleverTapInbox(eventName, event) {
-  console.log('handleCleverTapInbox', eventName, event);
-  ToastAndroid.show(`${eventName} called!`, ToastAndroid.SHORT);
-}
-
-class App extends Component {
-  constructor() {
-    super();
-    CleverTap.setDebugLevel(3);
-    CleverTap.initializeInbox();
-    // CTModule.initCleverTap("Kuwait");
-  }
-
-  state = {
-    title: 'Title',
-    message: 'Message',
-    appState: AppState.currentState,
-  };
-
-  //to add the listener
-  componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange);
-    console.log('This is from didMount');
-    // CTModule.initCleverTap('Kuwait');
-  }
-
-  //to remove the listener
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
-  }
-
-  //To fetch the app state
-  _handleAppStateChange = nextAppState => {
-    this.setState({appState: nextAppState});
-
-    console.log('AppState' + this.state.appState);
-    if (this.state.appState === 'background') {
-      //for background
-      console.log('Background Mode.');
-      CleverTap.discardInAppNotifications();
-    } else if (this.state.appState === 'active') {
-      //for foreground
-      console.log('Foreground Mode.');
-    } else if (this.state.appState === 'inactive') {
-      //for inactive
-      console.log('inactive Mode.');
-    }
-  };
-
-  profileGetProp = () => {
-    CleverTap.profileGetProperty('MSG-email', (err, res) => {
-      console.log('CleverTap GetProperty  => CleverTap MSG-email: ', res, err);
-    });
-    CleverTap.profileGetProperty('Email', (err, res) => {
-      console.log('CleverTap GetProperty  => CleverTap Email: ', res, err);
-    });
-    CleverTap.profileGetProperty('Name', (err, res) => {
-      console.log('CleverTap GetProperty  => CleverTap Name: ', res, err);
-    });
-  };
-
-  updateProfile = () => {
-    // CleverTap.profileSet({
-    //   DOB: new Date('1996-10-11T06:35:31'),
-    //   UserPropKey: 'UserPropValue',
-    //   Photo: 'https://www.entforall.com/images/founder.jpg',
-    // });
-
-    CleverTap.onUserLogin({
-      Email: 'iamreactnativeuser@test.com',
-      disablePromotionalNoti: 'no',
-      'MSG-email': true,
-      'MSG-push': true,
-      'MSG-sms': true,
-      'MSG-whatsapp': true,
-    });
-    //called from CTModule.java
-    // CTModule.callOnUserLogin();
-
-    Alert.alert('Profile Update Clicked');
-  };
-
-  pushEvent = () => {
-    Alert.alert('Push Event Clicked');
-    // CleverTap.recordEvent('Product Viewed');
-
-    // event with properties
-    var props = {test: 'Hello', test2: 'World'};
-
-    CleverTap.recordEvent('App Launched', props);
-  };
-
-  pushNotificationn = () => {
-    Alert.alert('Push Notification Clicked');
-    CleverTap.recordEvent('Karthiks Noti Event');
-  };
-
-  reactPush = () => {
-    Alert.alert('React Push Notification Clicked');
-    CleverTap.recordEvent('Karthiks React Noti Event');
-  };
-
-  reactKKPush = () => {
-    Alert.alert('React Push Notification Clicked');
-    // CleverTap.recordEvent('KarthikNotiEventNew');
-    CleverTap.recordEvent('Test Sharif');
-  };
-
-  inApp = () => {
-    Alert.alert('In App Clicked');
-    CleverTap.recordEvent('Karthiks InApp Event');
-  };
-
-  //App Inbox
-  appInbox = (eventName, event) => {
-    console.log('CleverTap Inbox Event - ', eventName, event);
-    CleverTap.recordEvent('Karthiks App Inbox Event');
-    CleverTap.showInbox({
-      tabs: ['Activites', 'Announcements'],
-      navBarTitle: 'My App Inbox',
-      navBarTitleColor: '#000000',
-      navBarColor: '#FFFFFF',
-      inboxBackgroundColor: '#AED6F1',
-      backButtonColor: '#000000',
-      noMessageText: 'No message(s)',
-      noMessageTextColor: '#FF0000',
-      unselectedTabColor: '#0000FF',
-      selectedTabColor: '#FF0000',
-      selectedTabIndicatorColor: '#000000',
-      firstTabTitle: 'Activities',
-    });
-
-    CleverTap.getAllInboxMessages((err, res) => {
-      console.log('All Inbox Messages: ', res, err);
-      console.log('LOGGGG: ', res.length);
-    });
-
-    Alert.alert('App Inbox Clicked');
-  };
-
-  nativeDisplay = () => {
-    CleverTap.recordEvent('Karthiks Native Display Event');
-    // CleverTap.recordEvent('KarthikNotiEventNew');
-    // var props = {
-    //   'Product Name': 'Home Beauty Callus Remover Device | 1.5 V',
-    //   'Product SKU': '16190009',
-    //   'Product Price': '177.5',
-    //   'Brand Name': 'HOME BEAUTY',
-    //   'Is In Stock': '1',
-    // };
-    // CleverTap.recordEvent('Product Viewed', props);
-    // setTimeout(() => {
-    //   CleverTap.getAllDisplayUnits((err, res) => {
-    //     console.log('All Display Units: ', JSON.stringify(res), err);
-    //   });
-    // }, 10000);
-
-    CleverTap.addListener(CleverTap.CleverTapDisplayUnitsLoaded, data => {
-      console.log('This is unit iD: ', data);
-    });
-    CleverTap.getAllDisplayUnits((err, res) => {
-      console.log('All Display Units: ', res, err);
-      // this.setState({datasource: JSON.parse(res)});
-      this.setState({datasource: res});
-      console.log('this is Datasource: ', this.state.datasource[0]);
-      //   // this.setState({
-      //   //   title: JSON.stringify(
-      //   //     this.state.datasource.content[0].title.text,
-      //   //   ).replace(/['"]+/g, ''),
-      //   //   message: JSON.stringify(
-      //   //     this.state.datasource.content[0].message.text,
-      //   //   ).replace(/['"]+/g, ''),
-      //   // });
-      //   // this.setState({
-      //   //   title: JSON.stringify(
-      //   //     this.state.datasource.content[0].title.text,
-      //   //   ).replace(/['"]+/g, ''),
-      //   //   message: JSON.stringify(
-      //   //     this.state.datasource.content[0].message.text,
-      //   //   ).replace(/['"]+/g, ''),
-      //   // });
-      Alert.alert('Native Display Clicked');
-
-      //   //   // for Display Unit Id use the below one
-      console.log('This is wzrk_id:', this.state.datasource[0].wzrk_id);
-      CleverTap.pushDisplayUnitViewedEventForID(this.state.datasource.ti);
-      CleverTap.pushDisplayUnitClickedEventForID(this.state.datasource.ti);
-
-      // this.setState({datasource: JSON.parse(res)});
-      // this.setState({nativekey: this.state.datasource.wzrk_id}); //Store wzrk_id to use it as Unit_id
-      this.setState({
-        message: this.state.datasource[0].content[0].message.text,
-        title: this.state.datasource[0].content[0].title.text,
-      });
-    });
-  };
-
-  goToKuwait = () => {
-    CTModule.initCleverTap('KSA');
-    CTModule.resurrectApp();
-    // CleverTap.setInstanceWithAccountId('TEST-W8W-6WR-846Z');
-  };
-  goToOman = () => {
-    CTModule.initCleverTap('UAE');
-    CTModule.resurrectApp();
-  };
-
-  promotionalNotif = () => {
-    CleverTap.profileSet({
-      disablePromotionalNoti: 'yes',
-    });
-  };
-
-  render() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View>
-          <Button title="Go To KSA" onPress={this.goToKuwait} />
-          <Separator />
-          <Button title="Go To UAE" onPress={this.goToOman} />
-          <Separator />
-          <Button title="Update Profile" onPress={this.updateProfile} />
-          <Separator />
-          <Button title="Push Event" onPress={this.pushEvent} />
-          <Separator />
-          <Button title="Push Notification" onPress={this.pushNotificationn} />
-          <Separator />
-          <Button title="In App" onPress={this.inApp} />
-          <Separator />
-          <Button title="App Inbox" onPress={this.appInbox} />
-          <Separator />
-          <Button title="Native Display" onPress={this.nativeDisplay} />
-          <Separator />
-          <Button title="React KK PN" onPress={this.reactKKPush} />
-          <Separator />
-          <Button title="Promotional" onPress={this.promotionalNotif} />
-          <Separator />
-          <Text style={styles.titleText}>Native Display Message </Text>
-          <Separator />
-          <Text style={styles.textND}>{this.state.title}</Text>
-          <Separator />
-          <Text style={styles.textND}>{this.state.message}</Text>
-          <Separator />
-          <Button title="Get Profile Property" onPress={this.profileGetProp} />
-        </View>
-      </SafeAreaView>
-    );
-  }
-}
-
-// CleverTap.onUserLogin({
-//   Email: 'iamreactnativeuser@test.com',
-//   disablePromotionalNoti: 'no',
-//   'MSG-email': true,
-//   'MSG-push': true,
-//   'MSG-sms': true,
-//   'MSG-whatsapp': true,
-// });
-
-CleverTap.createNotificationChannel(
-  'testkk123',
-  'React Native Test',
-  'This is a React-Native test by Karthik',
-  5,
-  true,
-);
-
-CleverTap.createNotificationChannel(
-  'transactional',
-  'transactional_test',
-  'This is a transactional_test by Karthik',
-  5,
-  true,
-);
-
-CleverTap.createNotificationChannel(
-  'promotional',
-  'promotional_test',
-  'This is a promotional_test by Karthik',
-  5,
-  true,
-);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    marginHorizontal: 16,
-  },
-  item: {
-    backgroundColor: 'teal',
-  },
-  separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  titleText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  textND: {
-    fontSize: 18,
-    color: 'black',
-  },
-});
+};
 
 export default App;

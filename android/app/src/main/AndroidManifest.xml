@@ -23,6 +23,20 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="karthikdl" android:host="nativedisplaypage" />
+                <data android:scheme="karthikdl" android:host="geofencepage" />
+                <data android:scheme="karthikdl" android:host="customaipage" />
+                <data android:scheme="karthikdl" android:host="webviewpage" />
+                <data android:scheme="karthikdl" android:host="prodexppage" />
+                <data android:scheme="karthikdl" android:host="mainpage" />
+                <data android:scheme="karthikdl" android:host="profilepage" />
+                <data android:scheme="karthikdl" android:host="loginpage" />
+            </intent-filter>
         </activity>
 
         <meta-data
