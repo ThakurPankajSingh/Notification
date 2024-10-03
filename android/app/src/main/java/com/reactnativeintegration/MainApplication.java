@@ -45,7 +45,7 @@ import org.json.JSONObject;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
-//import com.clevertap.react.CleverTapApplication;
+import com.clevertap.react.CleverTapApplication;
 //
 //import com.clevertap.android.sdk.interfaces.NotificationHandler;
 //import com.clevertap.android.pushtemplates.PushTemplateNotificationHandler;
@@ -53,7 +53,7 @@ import java.util.HashMap;
 //import com.clevertap.android.pushtemplates.TemplateRenderer;
 
 // public class MainApplication extends Application implements ReactApplication, CTPushNotificationListener {
-public class MainApplication extends Application implements ActivityLifecycleCallbacks, ReactApplication {
+public class MainApplication extends CleverTapApplication implements ActivityLifecycleCallbacks, ReactApplication {
 
     private final ReactNativeHost mReactNativeHost =
             new ReactNativeHost(this) {
