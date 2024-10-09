@@ -52,9 +52,11 @@ const Login = ({navigation}) => {
 
     CleverTap.onUserLogin({
       Name: inputValues.name,
-      Identity: inputValues.identity,
+      // Identity: inputValues.identity,
+      Identity: 'gauravSingh1',
       Email: inputValues.email,
-      Phone: '+91' + inputValues.mobileNumber,
+      // Phone: '+91' + inputValues.mobileNumber,
+      Phone: '+917021815311',
       disablePromotionalNoti: 'no',
       'MSG-email': true,
       'MSG-push': true,
