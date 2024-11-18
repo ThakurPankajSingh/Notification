@@ -19,6 +19,8 @@ const {CTModule} = NativeModules;
 
 const Separator = () => <View style={styles.separator} />;
 
+let cleverTapInstance = null;
+
 Linking.addEventListener('url', e => {
   console.log('Deeplink inside app: ' + e.url);
   handleDeepLink(e.url);
@@ -201,12 +203,14 @@ class Home extends Component {
     // event with properties
     var props = {test: 'Hello', test2: 'World'};
 
-    CleverTap.recordEvent('App Launched', props);
+    CleverTap.recordEvent('React Native Event', props);
   };
 
   pushNotificationn = () => {
     Alert.alert('Push Notification Clicked');
-    CleverTap.recordEvent('Karthiks Noti Event');
+    // CleverTap.recordEvent('Karthiks Noti Event');
+    var props = {test: 'Hello', test2: 'World'};
+    CTModule.raiseEvent('Karthiks Noti Event', props);
   };
 
   reactPush = () => {
@@ -312,7 +316,6 @@ class Home extends Component {
   goToKuwait = () => {
     CTModule.initCleverTap('KSA');
     CTModule.resurrectApp();
-    // CleverTap.setInstanceWithAccountId('TEST-W8W-6WR-846Z');
   };
   goToOman = () => {
     CTModule.initCleverTap('UAE');

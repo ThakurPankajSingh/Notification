@@ -41,10 +41,17 @@
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
+            android:value="TEST" />
+        <meta-data
+            android:name="CLEVERTAP_TOKEN"
+            android:value="TEST" />
+
+        <!-- <meta-data
+            android:name="CLEVERTAP_ACCOUNT_ID"
             android:value="TEST-W8W-6WR-846Z" />
         <meta-data
             android:name="CLEVERTAP_TOKEN"
-            android:value="TEST-206-0b0" />
+            android:value="TEST-206-0b0" /> -->
 
         <!-- TEST-KarthikTest2   -->
 <!--        <meta-data-->

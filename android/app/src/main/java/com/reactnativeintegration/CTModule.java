@@ -13,6 +13,11 @@ import com.facebook.react.bridge.ReactMethod;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.io.*;
+import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReadableMap;
+import java.util.*;
+import com.facebook.react.bridge.*;
 
 public class CTModule extends ReactContextBaseJavaModule {
     Context context;
@@ -35,7 +40,6 @@ public class CTModule extends ReactContextBaseJavaModule {
     @ReactMethod
     void initCleverTap(String country) {
         Log.d("CT", "I am from CTModule initCleverTap Method");
-//        clevertapAdditionalInstance = CleverTapAPI.getDefaultInstance(getReactApplicationContext());
         if (Objects.equals(country, "KSA")) {
 
             clevertapAdditionalInstanceConfig = CleverTapInstanceConfig.createInstance(
@@ -50,11 +54,6 @@ public class CTModule extends ReactContextBaseJavaModule {
 
             clevertapAdditionalInstance = CleverTapAPI.instanceWithConfig(getReactApplicationContext(), clevertapAdditionalInstanceConfig);
 
-
-//            CleverTapAPI.changeCredentials("TEST-W8W-6WR-846Z", "TEST-206-0b0");
-//            CleverTapAPI.setAppForeground(true);
-//            ActivityLifecycleCallback.register(getCurrentActivity().getApplication());
-
         } else if (Objects.equals(country, "UAE")) {
             clevertapAdditionalInstanceConfig = CleverTapInstanceConfig.createInstance(
                     getReactApplicationContext(),
@@ -67,17 +66,23 @@ public class CTModule extends ReactContextBaseJavaModule {
             clevertapAdditionalInstanceConfig.enablePersonalization(false);
 
             clevertapAdditionalInstance = CleverTapAPI.instanceWithConfig(getReactApplicationContext(), clevertapAdditionalInstanceConfig);
-//            ActivityLifecycleCallback.register(getCurrentActivity().getApplication());
-
-//            CleverTapAPI.changeCredentials("TEST-W8W-6WR-846Z","TEST-206-0b0" );
-//            CleverTapAPI.setAppForeground(true);
-//            ActivityLifecycleCallback.register(getCurrentActivity().getApplication());
 
         }
     }
 
     @ReactMethod
+    public void raiseEvent(String eventName , ReadableMap props) {
+        Map<String, Object> finalProps = eventPropsFromReadableMap(props, Object.class);
+           if (finalProps == null) {
+               clevertapAdditionalInstance.pushEvent(eventName);
+           } else {
+               clevertapAdditionalInstance.pushEvent(eventName, finalProps);
+           }
+    }
+
+    @ReactMethod
     CleverTapAPI returnCTInstance() {
+        System.out.println("clevertapAdditionalInstance: "+clevertapAdditionalInstance.toString());
         return clevertapAdditionalInstance;
     }
 
@@ -100,7 +105,42 @@ public class CTModule extends ReactContextBaseJavaModule {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
+    private <T> HashMap<String, T> eventPropsFromReadableMap(ReadableMap propsMap, Class<T> tClass) {
+        if (propsMap == null) {
+            return null;
+        }
 
-    // pass you reference from here
+        HashMap<String, T> props = new HashMap<>();
 
+        ReadableMapKeySetIterator iterator = propsMap.keySetIterator();
+
+        while (iterator.hasNextKey()) {
+            try {
+                String key = iterator.nextKey();
+                ReadableType readableType = propsMap.getType(key);
+
+                if (readableType == ReadableType.String) {
+                    props.put(key, tClass.cast(propsMap.getString(key)));
+                } else if (readableType == ReadableType.Boolean) {
+                    props.put(key, tClass.cast(propsMap.getBoolean(key)));
+                } else if (readableType == ReadableType.Number) {
+                    try {
+                        props.put(key, tClass.cast(propsMap.getDouble(key)));
+                    } catch (Throwable t) {
+                        try {
+                            props.put(key, tClass.cast(propsMap.getInt(key)));
+                        } catch (Throwable t1) {
+                            Log.e("CleverTapReactNative", "Unhandled ReadableType.Number from ReadableMap");
+                        }
+                    }
+                } else {
+                    Log.e("CleverTapReactNative", "Unhandled event property ReadableType");
+                }
+            } catch (Throwable t) {
+                Log.e("CleverTapReactNative", t.getLocalizedMessage());
+            }
+        }
+        return props;
+    }
 }
