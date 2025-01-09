@@ -44,8 +44,8 @@ public class CTModule extends ReactContextBaseJavaModule {
 
             clevertapAdditionalInstanceConfig = CleverTapInstanceConfig.createInstance(
                     getReactApplicationContext(),
-                    "TEST-W8W-6WR-846Z",
-                    "TEST-206-0b0"
+                    "W67-9W5-9R7Z",
+                    "50c-a60"
             );
 
             clevertapAdditionalInstanceConfig.setDebugLevel(CleverTapAPI.LogLevel.VERBOSE);
@@ -57,8 +57,8 @@ public class CTModule extends ReactContextBaseJavaModule {
         } else if (Objects.equals(country, "UAE")) {
             clevertapAdditionalInstanceConfig = CleverTapInstanceConfig.createInstance(
                     getReactApplicationContext(),
-                    "TEST-RK4-66R-966Z",
-                    "TEST-266-432"
+                    "W67-9W5-9R7Z",
+                    "50c-a60"
             );
 
             clevertapAdditionalInstanceConfig.setDebugLevel(CleverTapAPI.LogLevel.VERBOSE);

@@ -16,10 +16,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (message.getData().size() > 0) {
                 Bundle extras = new Bundle();
                 for (Map.Entry<String, String> entry : message.getData().entrySet()) {
+                    Log.d("pay", "entry.getKey()"+ message.getData().get("nt"));
                     extras.putString(entry.getKey(), entry.getValue());
                     Log.d("pay", "entry.getKey()"+entry.getKey().toString());
                     Log.d("pay", "entry.Value()"+entry.getValue().toString());
+                    Log.d("pay", "entry.getKey()"+ message.getData().get("nt"));
+
                 }
+                Log.d("pay", "entry.getKey()"+ message.getData().get("nt"));
                 Log.e("TAG","onReceived Mesaage Called");
                 NotificationInfo info = CleverTapAPI.getNotificationInfo(extras);
                 String mainKey = extras.getString("firstKey1");
