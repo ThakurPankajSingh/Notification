@@ -3,53 +3,67 @@ package com.reactnativeintegration;
 import android.os.Bundle;
 import android.util.Log;
 import com.clevertap.android.sdk.CleverTapAPI;
-import com.clevertap.android.sdk.pushnotification.NotificationInfo;
-import com.clevertap.android.sdk.pushnotification.fcm.CTFcmMessageHandler;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import java.util.Map;
+import java.util.HashMap;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-    @Override
-    public void onMessageReceived(RemoteMessage message){
-        try {
-            if (message.getData().size() > 0) {
-                Bundle extras = new Bundle();
-                for (Map.Entry<String, String> entry : message.getData().entrySet()) {
-                    Log.d("pay", "entry.getKey()"+ message.getData().get("nt"));
-                    extras.putString(entry.getKey(), entry.getValue());
-                    Log.d("pay", "entry.getKey()"+entry.getKey().toString());
-                    Log.d("pay", "entry.Value()"+entry.getValue().toString());
-                    Log.d("pay", "entry.getKey()"+ message.getData().get("nt"));
+    private static final String TAG = "MyFcmMessage";
 
-                }
-                Log.d("pay", "entry.getKey()"+ message.getData().get("nt"));
-                Log.e("TAG","onReceived Mesaage Called");
-                NotificationInfo info = CleverTapAPI.getNotificationInfo(extras);
-                String mainKey = extras.getString("firstKey1");
-                String mainValue = "firstValue1";
-                if(mainKey == mainValue){
-                    Log.d("pay", "I will not print it");
-                } else {
-                    Log.d("pay", "I will print it");
-                    if (info.fromCleverTap) {
-                        new CTFcmMessageHandler()
-                                .createNotification(getApplicationContext(), message);
-//                        CleverTapAPI.createNotification(getApplicationContext(), extras);
-                    }
-                }
-                // if (info.fromCleverTap) {
-                //     CleverTapAPI.createNotification(getApplicationContext(), extras);
-                // }
-                Log.d("pay",extras.toString());
-                Log.d("pay",extras.getString("firstKey1"));
-            }
-        } catch (Throwable t) {
-            Log.d("MYFCMLIST", "Error parsing FCM message", t);
-        }
-    }
     @Override
     public void onNewToken(String token) {
-        CleverTapAPI.getDefaultInstance(this).pushFcmRegistrationId(token,true);
+        super.onNewToken(token);
+        Log.d(TAG, token);
+
+        // Register the new token with CleverTap
+        CleverTapAPI cleverTapAPI = CleverTapAPI.getDefaultInstance(this);
+        if (cleverTapAPI != null) {
+            cleverTapAPI.pushFcmRegistrationId(token, true);
+        }
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                return;
+            }
+
+            // Get new FCM registration token
+            String newToken = task.getResult();
+            Log.d(TAG, "MyFcmMessageListenerService: " + newToken);
+        });
+    }
+
+    @Override
+    public void onMessageReceived(RemoteMessage message) {
+        super.onMessageReceived(message);
+        Log.d(TAG, "Received FCM message: " + message.getData());
+
+        try {
+            if (!message.getData().isEmpty()) {
+                // Convert the message data to a HashMap
+                HashMap<String, String> dataMap = new HashMap<>(message.getData());
+                Log.d(TAG, "Received FCM message: " + message.getData());
+
+                Bundle extras = new Bundle();
+                for (String key : dataMap.keySet()) {
+                    extras.putString(key, dataMap.get(key));
+                }
+
+                // Pass the notification to CleverTap if applicable
+                CleverTapAPI cleverTapAPI = CleverTapAPI.getDefaultInstance(this);
+                if (cleverTapAPI != null) {
+                    boolean fromCleverTap = cleverTapAPI.getNotificationInfo(extras).fromCleverTap;
+                    if (fromCleverTap) {
+                        cleverTapAPI.createNotification(getApplicationContext(), extras);
+                    } else {
+                        // Handle non-CleverTap notifications
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "Error handling FCM message", t);
+        }
     }
 }
+

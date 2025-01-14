@@ -47,7 +47,7 @@ const App = () => {
       onReady={() => {
         console.log('Navigation is ready');
       }}>
-      <Stack.Navigator
+      {/* <Stack.Navigator
         initialRouteName="Login"
         screenOptions={{
           headerTitleAlign: 'center',
@@ -95,7 +95,7 @@ const App = () => {
           component={Login}
           options={{title: 'Login'}}
         />
-      </Stack.Navigator>
+      </Stack.Navigator> */}
     </NavigationContainer>
   );
 };

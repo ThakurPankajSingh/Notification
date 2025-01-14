@@ -4,13 +4,17 @@ import com.clevertap.android.pushtemplates.PushTemplateNotificationHandler;
 import com.clevertap.android.sdk.ActivityLifecycleCallback;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.interfaces.NotificationHandler;
+import com.clevertap.android.sdk.pushnotification.amp.CTPushAmpListener;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import java.util.Iterator;
 import java.util.*;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Application.*;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import com.facebook.react.ReactApplication;
@@ -34,8 +38,9 @@ import org.json.JSONObject;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import com.clevertap.react.CleverTapApplication;
+import com.clevertap.android.sdk.pushnotification.fcm.CTFcmMessageHandler;
 
-public class MainApplication extends CleverTapApplication implements ActivityLifecycleCallbacks, ReactApplication {
+public class MainApplication extends CleverTapApplication implements ActivityLifecycleCallbacks, ReactApplication, CTPushAmpListener {
 
     private final ReactNativeHost mReactNativeHost =
             new ReactNativeHost(this) {
@@ -71,6 +76,30 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
         CleverTapAPI.setNotificationHandler((NotificationHandler)new PushTemplateNotificationHandler());
         SoLoader.init(this, /* native exopackage */ false);
         initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+        //CleverTapAPI.getDefaultInstance(getApplicationContext());
+        CleverTapAPI cleverTapAPI = CleverTapAPI.getDefaultInstance(getApplicationContext());
+        cleverTapAPI.setCTPushAmpListener(this);
+        // Create Notification Channel
+        createNotificationChannel();
+    }
+
+    private void createNotificationChannel() {
+        // Check if the Android version is Oreo or above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = "nishayadav190";
+            String channelName = "Default Notification Channel";
+            String channelDescription = "Channel for general notifications";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+
+            // Create the NotificationChannel
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+            channel.setDescription(channelDescription);
+
+            // Register the channel with the system
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private static void initializeFlipper(
@@ -126,5 +155,19 @@ public class MainApplication extends CleverTapApplication implements ActivityLif
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
 
+    }
+
+    @Override
+    public void onPushAmpPayloadReceived(Bundle bundle) {
+        if (bundle != null) {
+            for (String key : bundle.keySet()) {
+                Object value = bundle.get(key);
+                Log.d("PushPayload", "Key: " + key + ", Value: " + value);
+            }
+        }
+        Log.d("PushPayloadddd", "Heloooooooooo");
+        // Pass the bundle to the CleverTap notification handler
+        //new CTFcmMessageHandler()
+        //        .createNotification(getApplicationContext(), bundle);
     }
 }
