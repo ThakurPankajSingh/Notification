@@ -2,3 +2,4 @@
 
 This is a example of CleverTap React Native SDK Application.
 # CleverTap-PushNotification
+# Notification
